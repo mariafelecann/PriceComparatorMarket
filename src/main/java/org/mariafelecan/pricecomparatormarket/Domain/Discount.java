@@ -18,7 +18,7 @@ public class Discount {
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    private ProductPriceEntry productPriceEntry;
 
     @Column(name = "start_date")
     private LocalDate startDate;
@@ -28,4 +28,44 @@ public class Discount {
 
     @Column(name = "discount_percent")
     private double discountPercent;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public ProductPriceEntry getProductPriceEntry() {
+        return productPriceEntry;
+    }
+
+    public void setProductPriceEntry(ProductPriceEntry productPriceEntry) {
+        this.productPriceEntry = productPriceEntry;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public double getDiscountPercent() {
+        return discountPercent;
+    }
+
+    public void setDiscountPercent(double discountPercent) {
+        this.discountPercent = discountPercent;
+    }
 }
