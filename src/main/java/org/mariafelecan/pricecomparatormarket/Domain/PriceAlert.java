@@ -65,4 +65,11 @@ public class PriceAlert {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        triggered = false;
+    }
+
 }

@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface DiscountRepository extends JpaRepository<Discount, Long> {
     List<Discount> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDate date1, LocalDate date2);
-    List<Discount> findByDiscountDate(LocalDate date);
+
+    List<Discount> findByStartDate(LocalDate startDate);
 }
