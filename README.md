@@ -19,8 +19,7 @@ It provides its users with the following features:
 - Clone this repo:
 
 ```bash
-    git clone [your-repository-url]
-    cd price-comparator-market-app # Or your project's root directory
+    git clone https://github.com/mariafelecann/PriceComparatorMarket.git
 ```
 
 - Build the project with maven
