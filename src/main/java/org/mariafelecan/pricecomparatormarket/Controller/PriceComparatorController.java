@@ -47,9 +47,9 @@ public class PriceComparatorController {
 
 
     @PostMapping("/basket-optimization")
-    public ResponseEntity<Map<String, ProductPriceEntry>> getOptimizedShoppingBasket(
+    public ResponseEntity<Map<String, List<ProductPriceEntry>>> getOptimizedShoppingBasket(
             @RequestBody Map<String, BigDecimal> productExternalIdsWithQuantities) {
-        Map<String, ProductPriceEntry> optimizedBasket = productService.getOptimizedShoppingBasket(productExternalIdsWithQuantities);
+        Map<String, List<ProductPriceEntry>> optimizedBasket = productService.getOptimizedShoppingBasket(productExternalIdsWithQuantities);
         if (optimizedBasket.isEmpty() && !productExternalIdsWithQuantities.isEmpty()) {
             return ResponseEntity.noContent().build();
         }

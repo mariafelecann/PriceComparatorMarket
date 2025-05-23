@@ -43,17 +43,55 @@ public class ProductService {
     }
 
 
-    @Transactional(readOnly = true)
-    public Map<String, ProductPriceEntry> getOptimizedShoppingBasket(Map<String, BigDecimal> productExternalIdsWithQuantities) {
-        Map<String, ProductPriceEntry> optimizedBasket = new HashMap<>();
+//    @Transactional(readOnly = true)
+//    public Map<String, ProductPriceEntry> getOptimizedShoppingBasket(Map<String, BigDecimal> productExternalIdsWithQuantities) {
+//        Map<String, ProductPriceEntry> optimizedBasket = new HashMap<>();
+//        LocalDate today = LocalDate.now();
+//
+//        for (Map.Entry<String, BigDecimal> entry : productExternalIdsWithQuantities.entrySet()) {
+//            String productId = entry.getKey();
+//
+//            Optional<Product> productOpt = productRepository.findByProductId(productId);
+//            if (productOpt.isEmpty()) {
+//                System.err.println("Product with external ID " + productId + " not found for basket optimization.");
+//                continue;
+//            }
+//            Product product = productOpt.get();
+//
+//            List<ProductPriceEntry> allPricesForProduct = productPriceEntryRepository.findByProductProductIdAndDateBetween(
+//                    product.getProductId(), today.minusWeeks(2), today.plusDays(1)
+//            );
+//
+//            Optional<ProductPriceEntry> cheapestPrice = allPricesForProduct.stream()
+//                    .filter(ppe -> ppe.getDate().isEqual(today) || ppe.getDate().isAfter(today.minusDays(7)))
+//                    .min(Comparator.comparing(ProductPriceEntry::getPrice));
+//
+//            if (cheapestPrice.isEmpty()) {
+//                cheapestPrice = getLatestPriceForProduct(product, null);
+//            }
+//
+//            cheapestPrice.ifPresent(ppe -> optimizedBasket.put(productId, ppe));
+//        }
+//        return optimizedBasket;
+//    }
+
+    public Map<String, List<ProductPriceEntry>> getOptimizedShoppingBasket(Map<String, BigDecimal> productExternalIdsWithQuantities) {
+
+        Map<String, ProductPriceEntry> cheapestPricesForEachProduct = new HashMap<>();
         LocalDate today = LocalDate.now();
 
         for (Map.Entry<String, BigDecimal> entry : productExternalIdsWithQuantities.entrySet()) {
             String productId = entry.getKey();
 
-            Optional<Product> productOpt = productRepository.findByProductId(productId);
+//            Optional<Product> productOpt = productRepository.findByProductId(productId);
+//            if (productOpt.isEmpty()) {
+//                System.err.println("Product with external ID " + productId + " not found for basket optimization.");
+//                continue;
+//            }
+            String cleanedProductId = productId.trim();
+            Optional<Product> productOpt = productRepository.findByProductIdCustomCaseInsensitive(cleanedProductId);
             if (productOpt.isEmpty()) {
-                System.err.println("Product with external ID " + productId + " not found for basket optimization.");
+                System.err.println("DEBUG: Product with ID '" + cleanedProductId + "' not found using custom case-insensitive query.");
                 continue;
             }
             Product product = productOpt.get();
@@ -70,11 +108,12 @@ public class ProductService {
                 cheapestPrice = getLatestPriceForProduct(product, null);
             }
 
-            cheapestPrice.ifPresent(ppe -> optimizedBasket.put(productId, ppe));
+            cheapestPrice.ifPresent(ppe -> cheapestPricesForEachProduct.put(productId, ppe));
         }
-        return optimizedBasket;
-    }
 
+        return cheapestPricesForEachProduct.values().stream()
+                .collect(Collectors.groupingBy(ProductPriceEntry::getStore));
+    }
 
     @Transactional(readOnly = true)
     public List<Discount> getBestActiveDiscounts(int limit) {
@@ -197,10 +236,9 @@ public class ProductService {
         return priceAlertRepository.save(alert);
     }
 
-    // --- Scheduled Task for Price Alerts ---
     @Transactional
     public List<PriceAlert> checkForTriggeredPriceAlerts() {
-        // Query for alerts that are NOT yet triggered
+
         List<PriceAlert> activeAlerts = priceAlertRepository.findByTriggeredFalse();
         List<PriceAlert> triggeredAlerts = new java.util.ArrayList<>();
         LocalDate today = LocalDate.now();
@@ -210,10 +248,9 @@ public class ProductService {
             if (latestPriceOpt.isPresent()) {
                 ProductPriceEntry latestPrice = latestPriceOpt.get();
 
-                // Check if price is at or below target and if the price entry is for today or recent enough
                 if (latestPrice.getPrice().compareTo(alert.getTargetPrice()) <= 0 && latestPrice.getDate().isEqual(today)) {
-                    alert.setTriggered(true); // Mark as triggered
-                    priceAlertRepository.save(alert); // Save the updated alert status
+                    alert.setTriggered(true);
+                    priceAlertRepository.save(alert);
                     triggeredAlerts.add(alert);
 
                     System.out.println("ALERT TRIGGERED for Product: " + alert.getProduct().getName() +
