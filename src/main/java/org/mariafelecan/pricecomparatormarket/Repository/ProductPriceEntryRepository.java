@@ -23,15 +23,4 @@ public interface ProductPriceEntryRepository extends JpaRepository<ProductPriceE
 
     Optional<ProductPriceEntry> findFirstByProductAndStoreOrderByDateDescIdDesc(Product product, String store);
 
-//    @Query("SELECT ppe FROM ProductPriceEntry ppe WHERE ppe.product = :product ORDER BY ppe.date DESC, ppe.id DESC")
-//    Optional<ProductPriceEntry> findLatestPriceForProduct(@Param("product") Product product);
-//
-//    @Query("SELECT ppe FROM ProductPriceEntry ppe WHERE ppe.product = :product AND ppe.store = :storeName ORDER BY ppe.date DESC, ppe.id DESC")
-//    Optional<ProductPriceEntry> findLatestPriceForProductAndStore(@Param("product") Product product, @Param("storeName") String storeName);
-
-//    @Query("SELECT ppe FROM ProductPriceEntry ppe WHERE ppe.product = :product AND ppe.date <= :date ORDER BY ppe.date DESC, ppe.id DESC")
-//    Optional<ProductPriceEntry> findLatestPriceForProductBeforeDate(@Param("product") Product product, @Param("date") LocalDate date);
-//
-//    Optional<ProductPriceEntry> findTopByProductAndStoreNameAndDateLessThanEqualOrderByDateDesc(Product product, String storeName, LocalDate date);
-
 }

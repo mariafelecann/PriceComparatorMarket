@@ -14,7 +14,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE LOWER(p.productId) = LOWER(:productIdParam)")
     Optional<Product> findByProductIdCustomCaseInsensitive(@Param("productIdParam") String productId);
 
-    Optional<Product> findByNameIgnoreCaseAndBrandIgnoreCase(String name, String brand); // Potentially needed for CSV
+    Optional<Product> findByNameIgnoreCaseAndBrandIgnoreCase(String name, String brand);
     List<Product> findByCategoryIgnoreCase(String category);
     List<Product> findByBrandIgnoreCase(String brand);
     List<Product> findByNameContainingIgnoreCase(String name);

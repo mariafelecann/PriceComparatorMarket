@@ -29,16 +29,35 @@ It provides its users with the following features:
 
 - Run the application
 
-3. ### Initial Data Import
+3. ### Routes
+
+-  **/import/all**
 
 Upon the first run (or if the H2 database is reset), you'll need to import the sample CSV data.
-- Ensure your CSV data files are located in `src/main/resources/csv/`.
-- Once the application is running, trigger the import via a POST request:
+Ensure your CSV data files are located in `src/main/resources/csv/`.
+Once the application is running, trigger the import via a POST request:
     ```
     POST http://localhost:8080/api/import/all
     Content-Type: application/json
     ```
   (Body can be empty or `{}`).
+
+- **discounts/best**
+  Lists products with the highest current percentage discounts.
+- **discounts/new**
+
+Lists discounts that started on a specific date
+
+- **products/price-history**
+
+Provides historical price data for a product or category or brand, filterable by date range and store
+
+- **products/recommendations**
+  Recommends alternative products from the same category, ordered by "value per unit"
+
+- **alerts/price**
+
+Creates a new price alert for a specific product at a target price
 
 4. ### Assumptions and Simplifications
 
